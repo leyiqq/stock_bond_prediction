@@ -188,7 +188,7 @@ params = {
 xgb_train = xgb.DMatrix(train_XGB_X,label = train_XGB_Y)
 xgb_test = xgb.DMatrix(test_XGB_X,label = test_XGB_Y)
 num_rounds = 300
-watchlist = [(xgb_test,'eval'),(xgb_train,'train')]
+watchlist = [(xgb_test,'eval'),(xgb_train,'train')]c
 
 #xgboost模型训练
 model_xgb = xgb.train(params,xgb_train,num_rounds,watchlist)
@@ -264,10 +264,33 @@ print(yPredict.shape)
 testPredict = scaler.inverse_transform(np.concatenate((test_LSTM_X, yPredict), axis=1))[:, -1:]
 test_LSTM_Y2 = scaler.inverse_transform(np.concatenate((test_LSTM_X, test_LSTM_Y.reshape(len(test_LSTM_Y),1)), axis=1))[:, -1:]
 print(testPredict.shape)
-print(testPredict)
+# print(testPredict)
 
 print("start calculate the mape")
 
 mape = np.mean(np.abs(test_LSTM_Y2.flatten()-testPredict.flatten())/test_LSTM_Y2.flatten())*100
 print('Test LSTM Score:%.6f MAPE' %(mape))
 
+
+yPredict_train = model.predict(train_LSTM_X2)
+print(yPredict_train.shape)
+print(train_LSTM_X2.shape)
+trainPredict = scaler.inverse_transform(np.concatenate((train_LSTM_X, yPredict_train), axis=1))[:, -1:]
+train_LSTM_Y2 = scaler.inverse_transform(np.concatenate((train_LSTM_Xc, train_LSTM_Y.reshape(len(train_LSTM_Y),1)), axis=1))[:, -1:]
+
+plt.plot(train_LSTM_Y2, color = 'red', label = 'Real Price for Train set')
+plt.plot(trainPredict, color = 'blue', label = 'Predicted Price for Train set')
+plt.title('Zclose Price Prediction for Train set')
+plt.xlabel('Time')
+plt.ylabel('Sohu Zclose Price')
+plt.legend()
+plt.show()
+
+
+plt.plot(test_LSTM_Y2, color = 'red', label = 'Real Price for Test set')
+plt.plot(testPredict, color = 'blue', label = 'Predicted Price for Test set')
+plt.title('Zclose Price Prediction for Test set')
+plt.xlabel('Time')
+plt.ylabel('Sohu Zclose Price')
+plt.legend()
+plt.show()
